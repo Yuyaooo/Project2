@@ -2,7 +2,7 @@
 
 ## Required Packages
 
-Please notice that the packages`rmarkdown`, `caret` , `corrplot`, `knitr` and `tidyverse` are required to be installed and loaded before running the code to create the reports. 
+Please notice that the packages`rmarkdown`, `caret` , `corrplot`, `knitr` , `GGally` and `tidyverse` are required to be installed and loaded before running the code to create the reports. 
 
 ## Reports list
 
