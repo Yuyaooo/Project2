@@ -97,6 +97,7 @@ library(rmarkdown)
 library(tidyverse)
 library(caret)
 library(corrplot)
+library(GGally)
 ```
 
 # Data
@@ -154,103 +155,145 @@ sum_news <- select(newsTrain, -contains("data_channel"))
 summary(sum_news)
 ```
 
-    ##  n_tokens_title  n_tokens_content n_non_stop_unique_tokens
-    ##  Min.   : 4.00   Min.   :   0.0   Min.   :0.0000          
-    ##  1st Qu.: 9.00   1st Qu.: 248.0   1st Qu.:0.6289          
-    ##  Median :10.00   Median : 402.0   Median :0.6924          
-    ##  Mean   :10.43   Mean   : 542.8   Mean   :0.6747          
-    ##  3rd Qu.:12.00   3rd Qu.: 719.8   3rd Qu.:0.7553          
-    ##  Max.   :18.00   Max.   :7764.0   Max.   :1.0000          
-    ##    num_hrefs      num_self_hrefs      num_imgs        num_videos    
-    ##  Min.   :  0.00   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.:  4.00   1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.: 0.000  
-    ##  Median :  7.00   Median : 3.000   Median : 1.000   Median : 0.000  
-    ##  Mean   : 10.69   Mean   : 3.362   Mean   : 4.414   Mean   : 1.326  
-    ##  3rd Qu.: 13.00   3rd Qu.: 4.000   3rd Qu.: 3.000   3rd Qu.: 1.000  
-    ##  Max.   :162.00   Max.   :51.000   Max.   :93.000   Max.   :75.000  
-    ##  average_token_length  num_keywords     kw_avg_min        kw_avg_max    
-    ##  Min.   :0.000        Min.   : 1.00   Min.   :   -1.0   Min.   :     0  
-    ##  1st Qu.:4.482        1st Qu.: 6.00   1st Qu.:  133.2   1st Qu.:174200  
-    ##  Median :4.655        Median : 7.00   Median :  227.4   Median :244633  
-    ##  Mean   :4.549        Mean   : 7.14   Mean   :  309.6   Mean   :259644  
-    ##  3rd Qu.:4.842        3rd Qu.: 9.00   3rd Qu.:  349.4   3rd Qu.:332793  
-    ##  Max.   :8.042        Max.   :10.00   Max.   :29946.9   Max.   :843300  
-    ##    kw_avg_avg    self_reference_avg_sharess     LDA_00       
-    ##  Min.   :    0   Min.   :     0             Min.   :0.01818  
-    ##  1st Qu.: 2367   1st Qu.:  1024             1st Qu.:0.02525  
-    ##  Median : 2841   Median :  2200             Median :0.03351  
-    ##  Mean   : 3064   Mean   :  6054             Mean   :0.18917  
-    ##  3rd Qu.: 3539   3rd Qu.:  5200             3rd Qu.:0.25143  
-    ##  Max.   :33536   Max.   :423100             Max.   :0.91999  
-    ##      LDA_01            LDA_02            LDA_03            LDA_04       
-    ##  Min.   :0.01819   Min.   :0.01819   Min.   :0.01819   Min.   :0.01818  
-    ##  1st Qu.:0.02504   1st Qu.:0.02857   1st Qu.:0.02857   1st Qu.:0.02857  
-    ##  Median :0.03337   Median :0.04000   Median :0.04000   Median :0.04001  
-    ##  Mean   :0.15282   Mean   :0.20568   Mean   :0.21825   Mean   :0.23408  
-    ##  3rd Qu.:0.17169   3rd Qu.:0.31347   3rd Qu.:0.35395   3rd Qu.:0.41033  
-    ##  Max.   :0.91997   Max.   :0.92000   Max.   :0.91998   Max.   :0.92707  
-    ##  global_rate_positive_words global_rate_negative_words
-    ##  Min.   :0.00000            Min.   :0.00000           
-    ##  1st Qu.:0.02840            1st Qu.:0.00978           
-    ##  Median :0.03828            Median :0.01534           
-    ##  Mean   :0.03923            Mean   :0.01672           
-    ##  3rd Qu.:0.04962            3rd Qu.:0.02169           
-    ##  Max.   :0.12500            Max.   :0.09058           
-    ##  avg_positive_polarity avg_negative_polarity title_subjectivity
-    ##  Min.   :0.0000        Min.   :-1.0000       Min.   :0.0000    
-    ##  1st Qu.:0.3049        1st Qu.:-0.3280       1st Qu.:0.0000    
-    ##  Median :0.3579        Median :-0.2532       Median :0.1000    
-    ##  Mean   :0.3543        Mean   :-0.2587       Mean   :0.2733    
-    ##  3rd Qu.:0.4117        3rd Qu.:-0.1854       3rd Qu.:0.5000    
-    ##  Max.   :1.0000        Max.   : 0.0000       Max.   :1.0000    
-    ##  title_sentiment_polarity     shares      
-    ##  Min.   :-1.00000         Min.   :     1  
-    ##  1st Qu.: 0.00000         1st Qu.:   914  
-    ##  Median : 0.00000         Median :  1400  
-    ##  Mean   : 0.06453         Mean   :  3639  
-    ##  3rd Qu.: 0.13636         3rd Qu.:  2775  
-    ##  Max.   : 1.00000         Max.   :690400
+    ##  n_tokens_title  n_tokens_content n_non_stop_unique_tokens   num_hrefs     
+    ##  Min.   : 4.00   Min.   :   0.0   Min.   :0.0000           Min.   :  0.00  
+    ##  1st Qu.: 9.00   1st Qu.: 248.0   1st Qu.:0.6289           1st Qu.:  4.00  
+    ##  Median :10.00   Median : 402.0   Median :0.6924           Median :  7.00  
+    ##  Mean   :10.43   Mean   : 542.8   Mean   :0.6747           Mean   : 10.69  
+    ##  3rd Qu.:12.00   3rd Qu.: 719.8   3rd Qu.:0.7553           3rd Qu.: 13.00  
+    ##  Max.   :18.00   Max.   :7764.0   Max.   :1.0000           Max.   :162.00  
+    ##  num_self_hrefs      num_imgs        num_videos     average_token_length
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   :0.000       
+    ##  1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.: 0.000   1st Qu.:4.482       
+    ##  Median : 3.000   Median : 1.000   Median : 0.000   Median :4.655       
+    ##  Mean   : 3.362   Mean   : 4.414   Mean   : 1.326   Mean   :4.549       
+    ##  3rd Qu.: 4.000   3rd Qu.: 3.000   3rd Qu.: 1.000   3rd Qu.:4.842       
+    ##  Max.   :51.000   Max.   :93.000   Max.   :75.000   Max.   :8.042       
+    ##   num_keywords     kw_avg_min        kw_avg_max       kw_avg_avg   
+    ##  Min.   : 1.00   Min.   :   -1.0   Min.   :     0   Min.   :    0  
+    ##  1st Qu.: 6.00   1st Qu.:  133.2   1st Qu.:174200   1st Qu.: 2367  
+    ##  Median : 7.00   Median :  227.4   Median :244633   Median : 2841  
+    ##  Mean   : 7.14   Mean   :  309.6   Mean   :259644   Mean   : 3064  
+    ##  3rd Qu.: 9.00   3rd Qu.:  349.4   3rd Qu.:332793   3rd Qu.: 3539  
+    ##  Max.   :10.00   Max.   :29946.9   Max.   :843300   Max.   :33536  
+    ##  self_reference_avg_sharess     LDA_00            LDA_01            LDA_02       
+    ##  Min.   :     0             Min.   :0.01818   Min.   :0.01819   Min.   :0.01819  
+    ##  1st Qu.:  1024             1st Qu.:0.02525   1st Qu.:0.02504   1st Qu.:0.02857  
+    ##  Median :  2200             Median :0.03351   Median :0.03337   Median :0.04000  
+    ##  Mean   :  6054             Mean   :0.18917   Mean   :0.15282   Mean   :0.20568  
+    ##  3rd Qu.:  5200             3rd Qu.:0.25143   3rd Qu.:0.17169   3rd Qu.:0.31347  
+    ##  Max.   :423100             Max.   :0.91999   Max.   :0.91997   Max.   :0.92000  
+    ##      LDA_03            LDA_04        global_rate_positive_words
+    ##  Min.   :0.01819   Min.   :0.01818   Min.   :0.00000           
+    ##  1st Qu.:0.02857   1st Qu.:0.02857   1st Qu.:0.02840           
+    ##  Median :0.04000   Median :0.04001   Median :0.03828           
+    ##  Mean   :0.21825   Mean   :0.23408   Mean   :0.03923           
+    ##  3rd Qu.:0.35395   3rd Qu.:0.41033   3rd Qu.:0.04962           
+    ##  Max.   :0.91998   Max.   :0.92707   Max.   :0.12500           
+    ##  global_rate_negative_words avg_positive_polarity avg_negative_polarity
+    ##  Min.   :0.00000            Min.   :0.0000        Min.   :-1.0000      
+    ##  1st Qu.:0.00978            1st Qu.:0.3049        1st Qu.:-0.3280      
+    ##  Median :0.01534            Median :0.3579        Median :-0.2532      
+    ##  Mean   :0.01672            Mean   :0.3543        Mean   :-0.2587      
+    ##  3rd Qu.:0.02169            3rd Qu.:0.4117        3rd Qu.:-0.1854      
+    ##  Max.   :0.09058            Max.   :1.0000        Max.   : 0.0000      
+    ##  title_subjectivity title_sentiment_polarity     shares      
+    ##  Min.   :0.0000     Min.   :-1.00000         Min.   :     1  
+    ##  1st Qu.:0.0000     1st Qu.: 0.00000         1st Qu.:   914  
+    ##  Median :0.1000     Median : 0.00000         Median :  1400  
+    ##  Mean   :0.2733     Mean   : 0.06453         Mean   :  3639  
+    ##  3rd Qu.:0.5000     3rd Qu.: 0.13636         3rd Qu.:  2775  
+    ##  Max.   :1.0000     Max.   : 1.00000         Max.   :690400
 
 ## Correlation
 
 We can explore the data using correlation especially how these variables
 as predictors are correlated with our target response `shares`.
 
-Due to the large amount of variables, we may visualize them as groups.
-The first nine variables are about numbers. Let’s see the correlation of
-first nine variables and `shares`.
+Due to the large amount of variables, we can visualize them as groups. I
+divide 30 predictors into 4 groups. Each group has 6 predictors and one
+response `share`.
+
+*group1*
 
 ``` r
-corr1 <- select(sum_news, 1:9, shares) %>% cor()
+subnews1 <- select(sum_news, 1:6, shares)
+corr1 <- cor(subnews1)
 corrplot(corr1)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-55-1.png)<!-- -->
 
-Most of variables are not highly correlated with others.
-
-Let’s see the variables about the content and word use and response
-`shares`.
+*group 2*
 
 ``` r
-corr2 <- select(sum_news, 10:18, shares) %>% cor()
+subnews2 <- select(sum_news, 7:12, shares)
+corr2 <- cor(subnews2)
 corrplot(corr2)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+
+*group3*
 
 ``` r
-corr3 <- select(sum_news, -c(1:18)) %>% cor()
+subnews3 <- select(sum_news, 13:18, shares)
+corr3 <- cor(subnews3)
 corrplot(corr3)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
 
-**All the predictors are little correlated to `shares`, even the
-correlation .**
+*group4*
 
-We may not get a very reasonable model to predict shares using these
-predictors.
+``` r
+subnews4 <- select(sum_news, -c(1:18))
+corr4 <- cor(subnews4)
+corrplot(corr4)
+```
+
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-58-1.png)<!-- -->
+
+Most of predictors are not highly correlated with others. Meanwhile,
+**all the predictors are little correlated to `shares`, even the
+correlations between predictors and response are almost equal to 0.**
+
+## Plots of relationships between predictors and response
+
+*group1*
+
+``` r
+ggpairs(subnews1)
+```
+
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
+
+*group2*
+
+``` r
+ggpairs(subnews2)
+```
+
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
+
+*group3*
+
+``` r
+ggpairs(subnews3)
+```
+
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
+
+*group4*
+
+``` r
+ggpairs(subnews4)
+```
+
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-62-1.png)<!-- -->
+
+**As the pairs plots shown, `shares` is less related to the
+predictors.**
 
 # Modeling
 
@@ -365,11 +408,11 @@ boostTree
     ##   3                  150      12312.23  0.008529315  3815.454
     ## 
     ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
-    ## 
-    ## Tuning parameter 'n.minobsinnode' was held constant at a value of 10
+    ## Tuning
+    ##  parameter 'n.minobsinnode' was held constant at a value of 10
     ## RMSE was used to select the optimal model using the smallest value.
-    ## The final values used for the model were n.trees = 50,
-    ##  interaction.depth = 1, shrinkage = 0.1 and n.minobsinnode = 10.
+    ## The final values used for the model were n.trees = 50, interaction.depth =
+    ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
 
 **The final chosen model with best tuning parameters**
 
@@ -393,5 +436,9 @@ round(rbind(tree_pred, boost_pred), 4)
     ## tree_pred  16484.28       NA 3687.826
     ## boost_pred 16411.44   0.0101 3643.421
 
-Choose a better model with smaller root mean square error (RMSE),
-smaller mean absolute error (MAE) and bigger R squared.
+Smaller root mean square error (RMSE) and smaller mean absolute error
+(MAE) shows that we have a better fit of data and more accurate
+predictions in test dataset.
+
+Choose the better model with relatively smaller root mean square error
+(RMSE), smaller mean absolute error (MAE) and bigger R squared.

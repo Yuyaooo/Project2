@@ -86,6 +86,7 @@ library(rmarkdown)
 library(tidyverse)
 library(caret)
 library(corrplot)
+library(GGally)
 ```
 
 # Data
@@ -146,28 +147,69 @@ summary(sum_news)
 
 We can explore the data using correlation especially how these variables as predictors are correlated with our target response `shares`. 
 
-Due to the large amount of variables, we may visualize them as groups. The first nine variables are about numbers. Let's see the correlation of first nine variables and `shares`.
+Due to the large amount of variables, we can visualize them as groups. I divide 30 predictors into 4 groups. Each group has 6 predictors and one response `share`. 
+
+*group1* 
 
 ```{r}
-corr1 <- select(sum_news, 1:9, shares) %>% cor()
+subnews1 <- select(sum_news, 1:6, shares)
+corr1 <- cor(subnews1)
 corrplot(corr1)
 ```
 
-Most of variables are not highly correlated with others.
-
-
-Let's see the variables about the content and word use and response `shares`.
+*group 2*
 
 ```{r}
-corr2 <- select(sum_news, 10:18, shares) %>% cor()
+subnews2 <- select(sum_news, 7:12, shares)
+corr2 <- cor(subnews2)
 corrplot(corr2)
-corr3 <- select(sum_news, -c(1:18)) %>% cor()
+```
+
+*group3*
+
+```{r}
+subnews3 <- select(sum_news, 13:18, shares)
+corr3 <- cor(subnews3)
 corrplot(corr3)
 ```
 
-**All the predictors are little correlated to `shares`, even the correlation .**
+*group4*
 
-We may not get a very reasonable model to predict shares using these predictors. 
+```{r}
+subnews4 <- select(sum_news, -c(1:18))
+corr4 <- cor(subnews4)
+corrplot(corr4)
+```
+
+Most of predictors are not highly correlated with others. Meanwhile, **all the predictors are little correlated to `shares`, even the correlations between predictors and response are almost equal to 0.**
+
+## Plots of relationships between predictors and response
+
+*group1*
+
+```{r, message=FALSE}
+ggpairs(subnews1)
+```
+
+*group2*
+
+```{r, message=FALSE}
+ggpairs(subnews2)
+```
+
+*group3*
+
+```{r, message=FALSE}
+ggpairs(subnews3)
+```
+
+*group4*
+
+```{r, message=FALSE}
+ggpairs(subnews4)
+```
+
+**As the pairs plots shown, `shares` is less related to the predictors.**
 
 # Modeling
 
@@ -244,4 +286,6 @@ boost_pred <- postResample(predict(boostTree, newdata = newsTest), newsTest$shar
 round(rbind(tree_pred, boost_pred), 4)
 ```
 
-Choose a better model with smaller root mean square error (RMSE), smaller mean absolute error (MAE) and bigger R squared. 
+Smaller root mean square error (RMSE) and smaller mean absolute error (MAE) shows that we have a better fit of data and more accurate predictions in test dataset.
+
+Choose the better model with relatively smaller root mean square error (RMSE), smaller mean absolute error (MAE) and bigger R squared. 
