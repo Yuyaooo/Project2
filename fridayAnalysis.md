@@ -148,7 +148,7 @@ newsTest <- news[test, ]
 ## Summary
 
 The summary of training data includes minimum, 1st quantile, median,
-mean, 3rd quantile and maximum.
+mean, 3rd quantile and maximum values of each variable.
 
 ``` r
 sum_news <- select(newsTrain, -contains("data_channel"))
@@ -254,9 +254,11 @@ corrplot(corr4)
 
 ![](fridayAnalysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-Most of predictors are not highly correlated with others. Meanwhile,
-**all the predictors are little correlated to `shares`, even the
-correlations between predictors and response are almost equal to 0.**
+The light color and smaller size of circle mean that the absolute
+correlation value is small. Thus, the graphs above show that most of
+predictors are not highly correlated with others. Meanwhile, **all the
+predictors are little correlated to `shares`, even the correlations
+between predictors and response are almost equal to 0.**
 
 ## Plots of relationships between predictors and response
 
@@ -291,6 +293,10 @@ ggpairs(subnews4)
 ```
 
 ![](fridayAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+The pairs of plots show the relationships between each two variables.
+The last row of plots show the relationship between predictors and
+`shares`.
 
 **As the pairs plots shown, `shares` is less related to the
 predictors.**

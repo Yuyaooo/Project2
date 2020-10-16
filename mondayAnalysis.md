@@ -148,7 +148,7 @@ newsTest <- news[test, ]
 ## Summary
 
 The summary of training data includes minimum, 1st quantile, median,
-mean, 3rd quantile and maximum.
+mean, 3rd quantile and maximum values of each variable.
 
 ``` r
 sum_news <- select(newsTrain, -contains("data_channel"))
@@ -222,7 +222,7 @@ corr1 <- cor(subnews1)
 corrplot(corr1)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-55-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 *group 2*
 
@@ -232,7 +232,7 @@ corr2 <- cor(subnews2)
 corrplot(corr2)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 *group3*
 
@@ -242,7 +242,7 @@ corr3 <- cor(subnews3)
 corrplot(corr3)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 *group4*
 
@@ -252,11 +252,13 @@ corr4 <- cor(subnews4)
 corrplot(corr4)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-58-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-Most of predictors are not highly correlated with others. Meanwhile,
-**all the predictors are little correlated to `shares`, even the
-correlations between predictors and response are almost equal to 0.**
+The light color and smaller size of circle mean that the absolute
+correlation value is small. Thus, the graphs above show that most of
+predictors are not highly correlated with others. Meanwhile, **all the
+predictors are little correlated to `shares`, even the correlations
+between predictors and response are almost equal to 0.**
 
 ## Plots of relationships between predictors and response
 
@@ -266,7 +268,7 @@ correlations between predictors and response are almost equal to 0.**
 ggpairs(subnews1)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 *group2*
 
@@ -274,7 +276,7 @@ ggpairs(subnews1)
 ggpairs(subnews2)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 *group3*
 
@@ -282,7 +284,7 @@ ggpairs(subnews2)
 ggpairs(subnews3)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 *group4*
 
@@ -290,7 +292,11 @@ ggpairs(subnews3)
 ggpairs(subnews4)
 ```
 
-![](mondayAnalysis_files/figure-gfm/unnamed-chunk-62-1.png)<!-- -->
+![](mondayAnalysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+The pairs of plots show the relationships between each two variables.
+The last row of plots show the relationship between predictors and
+`shares`.
 
 **As the pairs plots shown, `shares` is less related to the
 predictors.**
