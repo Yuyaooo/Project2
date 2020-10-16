@@ -102,8 +102,7 @@ library(corrplot)
 # Data
 
 ``` r
-path <- file.path(getwd(), "OnlineNewsPopularity.csv")
-temp_news <- read_csv(file = path)
+temp_news <- read_csv(file = "./OnlineNewsPopularity.csv")
 weekday <- vector()
 for(i in seq_len(nrow(temp_news))){
   if (temp_news$weekday_is_monday[i] == 1){
@@ -128,8 +127,8 @@ for(i in seq_len(nrow(temp_news))){
     weekday[i]  <- "sunday"
   }
 }
-temp_news <- cbind(temp_news, weekday)
-news <- temp_news %>% filter(weekday == params$weekday) %>% select(n_tokens_title, n_tokens_content, n_non_stop_unique_tokens, num_hrefs, num_self_hrefs, num_imgs, num_videos, average_token_length, num_keywords, data_channel_is_lifestyle, data_channel_is_entertainment, data_channel_is_bus, data_channel_is_socmed,data_channel_is_tech,data_channel_is_world,kw_avg_min, kw_avg_max,kw_avg_avg,self_reference_avg_sharess,LDA_00,LDA_01,LDA_02, LDA_03, LDA_04, global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,title_subjectivity,title_sentiment_polarity,shares)
+np <- cbind(temp_news, weekday)
+news <- np %>% filter(weekday == params$weekday) %>% select(n_tokens_title, n_tokens_content, n_non_stop_unique_tokens, num_hrefs, num_self_hrefs, num_imgs, num_videos, average_token_length, num_keywords, data_channel_is_lifestyle, data_channel_is_entertainment, data_channel_is_bus, data_channel_is_socmed,data_channel_is_tech,data_channel_is_world,kw_avg_min, kw_avg_max,kw_avg_avg,self_reference_avg_sharess,LDA_00,LDA_01,LDA_02, LDA_03, LDA_04, global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,title_subjectivity,title_sentiment_polarity,shares)
 news$data_channel_is_lifestyle <- as.factor(news$data_channel_is_lifestyle)
 news$data_channel_is_entertainment <- as.factor(news$data_channel_is_entertainment)
 news$data_channel_is_bus <- as.factor(news$data_channel_is_bus)
@@ -247,7 +246,11 @@ corrplot(corr3)
 
 ![](saturdayAnalysis_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
-**All the predictors are little correlated to `shares`. **
+**All the predictors are little correlated to `shares`, even the
+correlation .**
+
+We may not get a very reasonable model to predict shares using these
+predictors.
 
 # Modeling
 
@@ -295,9 +298,15 @@ regTree
     ## RMSE was used to select the optimal model using the smallest value.
     ## The final value used for the model was cp = 0.06325111.
 
+**The final chosen model with best tuning parameters**
+
 ``` r
-regTree$bestTune
+regTree$bestTune %>% knitr::kable()
 ```
+
+|   |        cp |
+| - | --------: |
+| 3 | 0.0632511 |
 
 ### Boosted tree - Ensemble
 
@@ -362,9 +371,15 @@ boostTree
     ## The final values used for the model were n.trees = 50,
     ##  interaction.depth = 1, shrinkage = 0.1 and n.minobsinnode = 10.
 
+**The final chosen model with best tuning parameters**
+
 ``` r
-boostTree$bestTune
+boostTree$bestTune %>% knitr::kable()
 ```
+
+| n.trees | interaction.depth | shrinkage | n.minobsinnode |
+| ------: | ----------------: | --------: | -------------: |
+|      50 |                 1 |       0.1 |             10 |
 
 ### Test and Compare
 
@@ -378,5 +393,5 @@ round(rbind(tree_pred, boost_pred), 4)
     ## tree_pred  6685.818       NA 3303.191
     ## boost_pred 6812.894    0.012 3346.866
 
-Choose the model with smaller root mean square error (RMSE), smaller
-mean absolute error (MAE) and bigger R squared.
+Choose a better model with smaller root mean square error (RMSE),
+smaller mean absolute error (MAE) and bigger R squared.
