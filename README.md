@@ -23,9 +23,7 @@ The analysis for [Sunday is available here](sundayAnalysis.md).
 ## The code used to automate the process
 
 ```{r, include=TRUE, eval=FALSE, echo=FALSE}
-
 day <- unique(np$weekday)
-
 output_file <- paste0(day, "Analysis.md")
 
 params = lapply(day, FUN = function(x){list(weekday = x)})
